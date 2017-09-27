@@ -1,6 +1,6 @@
 # Fitted multiple regression models of soil properties.
 
-**Fitted Variable**
+**Fitted variable**
  - WP: Wilt point
  - FC: Field capacity 
  - SAT: Saturation
