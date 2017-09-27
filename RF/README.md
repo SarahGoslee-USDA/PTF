@@ -1,5 +1,7 @@
 # Fitted Random Forest models of soil properties.
 
+Fitted models as binary R objects are in the release associated with this repository.
+
 **Fitted variable**
  - WP: Wilt point
  - FC: Field capacity 
