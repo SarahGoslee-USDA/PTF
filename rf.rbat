@@ -20,7 +20,7 @@ load("hzlist.train.RDA")
 
 RFTOB.FC <- ranger(wthirdbar_r ~ ., hzlist.train[, c("sandtotal_r","silttotal_r","claytotal_r", "om_r", "dbthirdbar_r", "wthirdbar_r")], importance='impurity', seed=8320)
 
-# dontrun # save(RFTOB.FC, file="RF/RFTOB.FC.RDA")
+# dontrun # save(RFTOB.FC, file="RF/RFTOB.FC.RDA", compress="xz")
 
 
 ###############################################
