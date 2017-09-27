@@ -1,0 +1,18 @@
+Empirical pedotransfer functions to support modeling in the continental United States
+
+Sarah Goslee
+Methods in Ecology & Evolution, in review
+September 2017
+
+Please contact author before citing.
+
+SSURGO data processing notes.
+
+1. Import SSURGO component data by state.
+2. Delete nonsoil and unknown data, and soils with organic matter > 50%.
+3. Keep the most common values for each named component within a state.
+4. Rescale so texture components add to 100%
+5. Split components into 70% training and 30% test set stratified by state.
+
+hzlist.train: 70% subset
+hzlist.test: 30% subset

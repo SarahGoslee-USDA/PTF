@@ -1,0 +1,129 @@
+# Empirical pedotransfer functions to support modeling
+# in the continental United States
+#
+# Sarah Goslee
+# Methods in Ecology & Evolution, in review
+# September 2017
+#
+# Please contact author before citing.
+#
+# Multiple Regression Models
+# following Jabloun & Sahli, 2006
+#
+# Example for Field Capacity, 5-variable model
+
+
+# 70% training set
+load("hzlist.train.RDA")
+
+## JS2006 M1: MR TOB
+
+base.dat <- hzlist.train[, colnames(hzlist.train) %in% c("sandtotal_r", "silttotal_r", "claytotal_r", "om_r", "dbthirdbar_r", "wthirdbar_r", "wfifteenbar_r", "wsatiated_r"),]
+base.dat <- base.dat[rowSums(base.dat == 0) == 0,]
+
+# Initial variable set
+mr.dat <- with(base.dat, data.frame(
+    Sa = sandtotal_r,
+    Sa2 = sandtotal_r^2,
+    SaI = 1/sandtotal_r,
+    SaL = log(sandtotal_r),
+    Si = silttotal_r,
+    Si2 = silttotal_r^2,
+    SiI = 1/silttotal_r,
+    SiL = log(silttotal_r),
+    Cl = claytotal_r,
+    Cl2 = claytotal_r^2,
+    ClI = 1/claytotal_r,
+    ClL = log(claytotal_r),
+    OM = om_r,
+    OM2 = om_r^2,
+    OMI = 1/om_r,
+    OML = log(om_r),
+    BD = dbthirdbar_r,
+    BD2 = dbthirdbar_r^2,
+    BDI = 1/dbthirdbar_r,
+    BDL = log(dbthirdbar_r),
+    qFC = wthirdbar_r,
+    qWP = wfifteenbar_r,
+    qSAT = wsatiated_r))
+
+
+MRTOB.qFC.lm <- lm(qFC ~ ., data=mr.dat)
+
+# Repeat, removing variables until no further terms can be dropped
+drop1(MRTOB.qFC.lm, test="F")
+
+
+# Final variable set
+mr.dat <- with(base.dat, data.frame(
+    Sa2 = sandtotal_r^2,
+    SaI = 1/sandtotal_r,
+    SaL = log(sandtotal_r),
+    Si = silttotal_r,
+    Si2 = silttotal_r^2,
+    Cl = claytotal_r,
+    Cl2 = claytotal_r^2,
+    ClI = 1/claytotal_r,
+    ClL = log(claytotal_r),
+    OM = om_r,
+    OM2 = om_r^2,
+    OMI = 1/om_r,
+    OML = log(om_r),
+    BD = dbthirdbar_r,
+    BD2 = dbthirdbar_r^2,
+    BDI = 1/dbthirdbar_r,
+    BDL = log(dbthirdbar_r),
+    qFC = wthirdbar_r))
+
+MRTOB.FC <- lm(qFC ~ ., data=mr.dat)
+
+# dontrun # save(MRTOB.FC, file="MRTOB.FC.RDA")
+
+###############################################
+
+# test on 30% test set
+
+load("hzlist.test.RDA")
+
+base.dat <- hzlist.test[, colnames(hzlist.test) %in% c("sandtotal_r", "silttotal_r", "claytotal_r", "om_r", "dbthirdbar_r", "wthirdbar_r", "wfifteenbar_r", "wsatiated_r"),]
+base.dat <- base.dat[rowSums(base.dat == 0) == 0,]
+
+mr.dat <- with(base.dat, data.frame(
+    Sa = sandtotal_r,
+    Sa2 = sandtotal_r^2,
+    SaI = 1/sandtotal_r,
+    SaL = log(sandtotal_r),
+    Si = silttotal_r,
+    Si2 = silttotal_r^2,
+    SiI = 1/silttotal_r,
+    SiL = log(silttotal_r),
+    Cl = claytotal_r,
+    Cl2 = claytotal_r^2,
+    ClI = 1/claytotal_r,
+    ClL = log(claytotal_r),
+    OM = om_r,
+    OM2 = om_r^2,
+    OMI = 1/om_r,
+    OML = log(om_r),
+    BD = dbthirdbar_r,
+    BD2 = dbthirdbar_r^2,
+    BDI = 1/dbthirdbar_r,
+    BDL = log(dbthirdbar_r),
+    qFC = wthirdbar_r,
+    qWP = wfifteenbar_r,
+    qSAT = wsatiated_r))
+
+MRTOB.pred <- data.frame(
+                    FCpred = predict(MRTOB.FC, mr.dat),
+                    FCmeas = mr.dat$qFC)
+
+###############################################
+
+source("error.rbat")
+
+# Table 3
+round(coefficients(MRTOB.FC), 4)
+
+# Table 4
+with(MRTOB.pred, erde(FCmeas, FCpred))
+

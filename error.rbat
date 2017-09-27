@@ -1,0 +1,43 @@
+# Error description
+
+#
+rmse <- function(x, y) {
+  # root mean square error
+  sqrt(mean((x - y)^2, na.rm=TRUE))
+}
+#
+mae <- function(x, y) {
+  # mean absolute error
+  mean(abs(y - x), na.rm=TRUE)
+}
+#
+me <- function(x, y) {
+  # mean error
+  mean(y - x, na.rm=TRUE)
+}
+#
+pbias <- function(x, y) { 
+    # percent bias
+    100 * sum(y - x, na.rm=TRUE) / sum(x, na.rm=TRUE) 
+}
+#
+erde <- function(x, y, plot=FALSE, main="", ...) {
+  # error description
+  # where x is the test data
+  # and y is the predicted value
+  cc <- !is.na(x) & !is.na(y) & !is.nan(x) & !is.nan(y) & !is.infinite(x) & !is.infinite(y)
+  x <- x[cc]
+  y <- y[cc]
+  R2 <- cor(x, y, use="pair")
+  RMSE <- rmse(x, y)
+  MAE <- mae(x, y)
+  ME <- me(x, y)
+  PBIAS <- pbias(x, y)
+  if(plot) {
+    main <- paste0(main, ": ", "R2 = ", round(R2, 3), "; RMSE = ", round(RMSE, 3), "; MAE = ", round(MAE, 3))
+    plot(x, y, xlab="Observed", ylab="Predicted", main=main, ...)
+    abline(c(0,1), col="gray", lwd=2)
+    abline(lm(y ~ x), col="red", lty=2)
+  }
+  unlist(list(R2 = R2, RMSE = RMSE, MAE = MAE, ME = ME, PBIAS = PBIAS))
+}

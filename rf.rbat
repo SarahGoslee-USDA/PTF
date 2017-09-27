@@ -1,0 +1,42 @@
+# Empirical pedotransfer functions to support modeling
+# in the continental United States
+#
+# Sarah Goslee
+# Methods in Ecology & Evolution, in review
+# September 2017
+#
+# Please contact author before citing.
+#
+# Random Forest Models
+#
+# Example for Field Capacity, 5-variable model
+
+
+library(ranger)
+
+
+# 70% training set
+load("hzlist.train.RDA")
+
+RFTOB.FC <- ranger(wthirdbar_r ~ ., hzlist.train[, c("sandtotal_r","silttotal_r","claytotal_r", "om_r", "dbthirdbar_r", "wthirdbar_r")], importance='impurity', seed=8320)
+
+# dontrun # save(RFTOB.FC, file="RF/RFTOB.FC.RDA")
+
+
+###############################################
+
+# test on 30% test set
+
+load("hzlist.test.RDA")
+
+RFTOB.pred <- data.frame(
+                    FCpred = predict(RFTOB.FC, hzlist.test)$predictions,
+                    FCmeas = hzlist.test$wthirdbar_r)
+
+###############################################
+
+source("error.rbat")
+
+# Table 4
+with(RFTOB.pred, erde(FCmeas, FCpred))
+
